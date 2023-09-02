@@ -1,6 +1,51 @@
+import { useState } from "react";
 import "../styles/auth.css";
+import axios from "axios";
 
 function Register() {
+const[values, setValues]  = useState({fullname: "", email: "", phoneNumber: "", location: "", idNumber: "", DOB: "", password: ""})
+const [userImage, setUserImage] = useState("") 
+
+const handleImage = (event) => {
+  const file = event.target.files[0];
+  setUserImage(file);
+}
+
+const handleChange = (event) => {
+  const {name, value} = event.target
+
+  setValues((prevValues) => ({ ...prevValues, [name]: value }))
+
+}
+
+
+const formSubmit = async(event) => {
+  event.preventDefault()
+
+  let formData = new FormData()
+
+  formData.append('userImage', userImage)
+  formData.append('fullname', values.fullname)
+  formData.append('password', values.password)
+  formData.append('phoneNumber', values.phoneNumber)
+  formData.append('email', values.email)
+  formData.append('DOB', values.DOB)
+  formData.append('location', values.location)
+  formData.append('idNumber', values.idNumber)
+
+  const res = await axios.post('/userroute/register', formData)
+
+  alert(res.data.msg)
+
+  window.location.href = "/login"
+
+
+}
+
+
+
+  
+ 
   return (
     <>
       <div className="container" style={{ marginTop: "2rem" }}>
@@ -11,7 +56,7 @@ function Register() {
                 <strong>Create An Account To Start Borrowing Books</strong>
               </div>
               <div className="card-body">
-                <form>
+                <form onSubmit={formSubmit}>
                   <div className="form-group">
                     <label className="text-muted" htmlFor="exampleInputEmail1">
                       Email Address
@@ -23,6 +68,8 @@ function Register() {
                       aria-describedby="emailHelp"
                       placeholder="Enter email"
                       name="email"
+                      value={values.email}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -37,6 +84,9 @@ function Register() {
                       aria-describedby="userName"
                       placeholder="Write Your Name"
                       name="fullname"
+                      value={values.fullname}
+                      onChange={handleChange}
+                    
                     />
                   </div>
 
@@ -48,6 +98,7 @@ function Register() {
                       type="file"
                       className="form-control"
                       id="exampleInputFile"
+                      onChange={handleImage}
                       
                     />
                   </div>
@@ -63,6 +114,8 @@ function Register() {
                       aria-describedby="phoneHumber"
                       placeholder="Write Your Phone Number"
                       name="phoneNumber"
+                      value={values.phoneNumber}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -77,6 +130,8 @@ function Register() {
                       aria-describedby="location"
                       placeholder="Write Your Current Home"
                       name="location"
+                      value={values.location}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -87,10 +142,12 @@ function Register() {
                     <input
                       type="date"
                       className="form-control"
-                      id="exampleInputName"
+                      id="exampleInputDate"
                       aria-describedby="dateOfBirth"
                       placeholder="Write Your Date Of Birth"
                       name="DOB"
+                      value={values.DOB}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -105,6 +162,8 @@ function Register() {
                       aria-describedby="IDNumber"
                       placeholder="Write Your ID Number"
                       name="idNumber"
+                      value={values.idNumber}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -127,6 +186,8 @@ function Register() {
                       id="exampleInputPassword1"
                       placeholder="Password"
                       name="password"
+                      value={values.password}
+                      onChange={handleChange}
                     />
                     {/* <small id="passwordHelp" className="form-text text-muted">Your password is saved in encrypted form</small> */}
                   </div>

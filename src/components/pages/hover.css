@@ -1,0 +1,15 @@
+.cont {
+    cursor: pointer;
+
+}
+.cont:hover {
+    transform: scale(1.02);
+}
+
+.cont h3 {
+font-family: 'Times New Roman', Times, serif;
+}
+
+.cont a {
+    font-size: medium;
+}

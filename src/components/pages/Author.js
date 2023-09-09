@@ -9,7 +9,12 @@ function Author() {
    
    let newAuthor = authors.find((author) => author._id === id)
 
-   
+  if(newAuthor === undefined) {
+    return(<>
+    <h2 className="text-center">i shot the sherif</h2>
+    
+    </>)
+  }
 
     return(<>
     <div className="row justify-content-center">

@@ -26,8 +26,8 @@ function Home() {
                });
 
                return (
-                  <div key={genre._id}>
-                     <h3>{genre.genreName}</h3>
+                  <div key={genre._id} style={{marginTop: "2rem"}}>
+                    <h2> <a href={`/books_by_genre/${genre._id}`} style={{textDecoration: "none"}}>{genre.genreName} Books</a> </h2>
                      <div className="row">
                         {firstTwoBooks.map((filteredBook) => (
                            <div key={filteredBook._id} className="col-md-4 mb-4">

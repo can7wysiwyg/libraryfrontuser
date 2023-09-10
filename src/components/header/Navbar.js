@@ -1,4 +1,4 @@
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import "../styles/navbar.css"
 import { useContext } from 'react';
 import {GlobalState} from "../GlobalState"
@@ -9,6 +9,7 @@ function NavBar() {
  const[isLogged] = state.userApi.isLogged
  const[isUser] = state.userApi.isUser
  const[onSuspension] = state.userApi.onSuspension
+ const[genres] = state.genresApi.genres
 
  const logoutUser = () => {
   localStorage.removeItem("usertoken")
@@ -106,11 +107,15 @@ function NavBar() {
             <Nav.Link href="/about" className="mx-2">About Us</Nav.Link>
 
 
-            {/* <NavDropdown title="Company" id="navbarDropdownMenuLink" className="mx-2">
-              <NavDropdown.Item href="#">Blog</NavDropdown.Item>
-              <NavDropdown.Item href="#">About Us</NavDropdown.Item>
-              <NavDropdown.Item href="#">Contact us</NavDropdown.Item>
-            </NavDropdown> */}
+            <NavDropdown title="Book Genres" id="navbarDropdownMenuLink" className="mx-2">
+            
+              {
+                genres?.map((genre) => (
+                  <NavDropdown.Item key={genre._id} href={`/books_by_genre/${genre._id}`}>{genre.genreName}</NavDropdown.Item>
+                ))
+              }
+              
+            </NavDropdown>
 
             {isLogged === true ? "" :   <Nav.Link href="/choices" className="mx-2">LOGIN-REGISTER</Nav.Link>
  }

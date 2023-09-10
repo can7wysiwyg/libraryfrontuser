@@ -37,7 +37,7 @@ function Home() {
                                  className="card-img-top"style={{width: "100%", maxHeight: "30vh",objectFit: "contain"}}
                                  />
                                   <div className="card-body">
-                                 <h3>{filteredBook.bookTitle}</h3>
+                                 <h3> <a href={`/single_book/${filteredBook._id}`} style={{textDecoration: "none", fontWeight: "bold"}}>{filteredBook.bookTitle}</a></h3>
                                   <h4>
                                     <AuthorNames name ={filteredBook.bookAuthor} />
                                     

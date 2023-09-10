@@ -6,6 +6,9 @@ import Login from "./components/pages/Login"
 import Choices from "./components/pages/Choices"
 import Author from "./components/pages/Author"
 import AuthorBooks from "./components/pages/AuthorBooks"
+import BooksByGenre from "./components/pages/BooksByGenre"
+import BookSingle from "./components/pages/BookSingle"
+import MyInfo from "./components/pages/MyInfo"
 
 function App() {
   return(<>
@@ -19,6 +22,10 @@ function App() {
 <Route path="/choices" element={<Choices />} />
 <Route path="/show_author/:id" element={<Author />} />
 <Route path="/author_books/:id" element={<AuthorBooks />} />
+<Route path="/books_by_genre/:id" element={<BooksByGenre />} />
+<Route path="/single_book/:id" element={<BookSingle />} />
+<Route path="/my_info" element={<MyInfo />} />
+
 
     </Routes>
 

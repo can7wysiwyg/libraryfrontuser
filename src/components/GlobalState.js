@@ -9,6 +9,7 @@ export const GlobalState = createContext()
 
 export const DataProvider = ({children}) => {
     let usertoken = JSON.parse(JSON.stringify(localStorage.getItem('usertoken')))
+    let toBorrowBooks = JSON.parse(JSON.stringify(localStorage.getItem('book')))
 
 
 let state = {
@@ -16,7 +17,8 @@ let state = {
     booksApi: BooksApi(),
     genresApi: GenresApi(),
     authorsApi: AuthorsApi(),
-    usertoken
+    usertoken,
+    toBorrowBooks
 }
 return(<GlobalState.Provider value={state}>
             {children}

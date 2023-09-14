@@ -28,3 +28,14 @@ export const getCart = () => {
     }
     return [];
 };
+
+
+export const itemTotal = () => {
+    if (typeof window !== "undefined") {
+        if (localStorage.getItem("book")) {
+            return JSON.parse(localStorage.getItem("book")).length;
+        }
+    }
+    return 0;
+};
+

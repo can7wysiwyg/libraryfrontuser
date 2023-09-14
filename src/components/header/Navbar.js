@@ -1,7 +1,12 @@
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import "../styles/navbar.css"
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {GlobalState} from "../GlobalState"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { getCart, itemTotal } from '../api/TrolleyApi';
+
+
 
 
 function NavBar() {
@@ -10,6 +15,50 @@ function NavBar() {
  const[isUser] = state.userApi.isUser
  const[onSuspension] = state.userApi.onSuspension
  const[genres] = state.genresApi.genres
+ const [items, setItems] = useState([]);
+
+ useEffect(() => {
+  const cartItems = getCart().map(item => ({ ...item, quantity: 1 }));
+  setItems(cartItems);
+}, []);
+
+
+
+
+const showTrolley = () => {
+
+  if(items.length !== 0) {
+
+    return(<>
+    <nav>
+      <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
+
+      <li className='nav-item'>
+                  <a className="nav-link pe-3 me-4 fw-bold active" aria-current="page" href="/my_trolley" >
+                  <FontAwesomeIcon icon={faShoppingCart} />
+                  <span> {itemTotal()} </span>
+                      </a>
+      
+                  </li>
+
+
+
+      </ul>
+    </nav>
+    
+    
+    </>)
+
+  } else{
+    return(<>
+    
+    
+    
+    </>)
+  }
+
+}
+
 
  const logoutUser = () => {
   localStorage.removeItem("usertoken")
@@ -36,6 +85,7 @@ function NavBar() {
       
                   </li>
 
+                  {showTrolley()}
                   <li className='nav-item'>
               <a className="nav-link pe-3 me-4 fw-bold active" aria-current="page" href="/" onClick={logoutUser}>
                     LOGOUT

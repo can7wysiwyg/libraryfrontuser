@@ -39,3 +39,22 @@ export const itemTotal = () => {
     return 0;
 };
 
+export const removeItem = bookId => {
+    let book = [];
+    if (typeof window !== "undefined") {
+        if (localStorage.getItem("cart")) {
+            book = JSON.parse(localStorage.getItem("book"));
+        }
+
+        book = book.filter(book => book._id !== bookId);
+
+        localStorage.setItem("book", JSON.stringify(book));
+    }
+};
+
+export const emptyCart = next => {
+    if (typeof window !== "undefined") {
+        localStorage.removeItem("book");
+        next();
+    }
+};

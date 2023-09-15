@@ -155,7 +155,21 @@ const BorrowComp = ({filteredBook}) => {
       
       
       </>)
-    } else if(isLogged === true) {
+    } else if(isLogged === true && items.length >= 3) {
+
+      return(<>
+      <h5 className="text-center">
+
+     BORROW LIMIT IS THREE
+
+      </h5>
+      
+      </>)
+    }
+    
+    
+    
+    else if(isLogged === true) {
 
       return(<>
    { result._id === filteredBook._id ? <h5 className="text-center">Book Is In Trolley </h5> : <h5 className="text-center text-primary"

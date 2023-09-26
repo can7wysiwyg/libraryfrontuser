@@ -4,6 +4,7 @@ import axios from "axios"
 import "./hover.css"
 import moment from "moment/moment";
 import { GlobalState } from "../GlobalState";
+import FirstCheck from "./FirstCheck";
 
 function AuthorBooks() {
     const{id} = useParams()
@@ -65,8 +66,9 @@ function AuthorBooks() {
                                     
                                     </h4> 
 
-                                    <h5 className="text-center"> <a href={`/borrow_book/${filteredBook._id}`} style={{textDecoration: "none"}}> BORROW BOOK </a> </h5>
+                                    <FirstCheck filteredBook={filteredBook} />
 
+                                    
                                  </div>
                                                         </div>
                            </div>

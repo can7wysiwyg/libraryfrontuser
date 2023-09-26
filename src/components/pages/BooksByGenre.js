@@ -2,6 +2,7 @@ import axios from "axios"
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { GlobalState } from "../GlobalState"
+import FirstCheck from "./FirstCheck"
 
 function BooksByGenre() {
    const {id} = useParams()
@@ -63,8 +64,9 @@ if(results.length === 0) {
                                     
                                     </h4> 
 
-                                    <h5 className="text-center"> <a href={`/borrow_book/${filteredBook._id}`} style={{textDecoration: "none"}}> BORROW BOOK </a> </h5>
+                                    <FirstCheck filteredBook={filteredBook} />
 
+                                   
                                  </div>
                                                         </div>
                            </div>

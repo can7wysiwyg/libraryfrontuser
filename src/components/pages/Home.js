@@ -1,22 +1,34 @@
 import { useContext, useEffect,  useState } from "react";
 import { GlobalState } from "../GlobalState";
 import "./hover.css";
-import { addItem, getCart } from "../api/TrolleyApi";
+import FirstCheck from "./FirstCheck";
+
 
 function Home() {
   const state = useContext(GlobalState);
   const [books] = state.booksApi.books;
   const [genres] = state.genresApi.genres;
-  
-  
-  if (books.length === 0) {
-    return (
-      <>
-        <h1 className="text-center">Books are loading</h1>
-      </>
-    );
-  }
 
+
+if(state === "" || state === undefined || state === null) {
+  return(<>
+  <h4 className="text-center">as the state loads...</h4>
+  
+  </>)
+}
+ 
+    if (books.length === 0) {
+      return (
+        <>
+          <h1 className="text-center">Books are loading</h1>
+        </>
+      );
+    }
+  
+
+   
+  
+  
   return (
     <div className="container">
       
@@ -66,7 +78,7 @@ function Home() {
                       <h4>
                         <AuthorNames name={filteredBook.bookAuthor} />
                       </h4>
-                      <BorrowComp filteredBook={filteredBook} />
+                     <FirstCheck filteredBook={filteredBook} /> 
 
                      
                     </div>
@@ -82,125 +94,9 @@ function Home() {
 }
 
 
-const BorrowComp = ({filteredBook}) => {
-  const state = useContext(GlobalState);
-  const [isLogged] = state.userApi.isLogged;
-  const [redirect, setRedirect] = useState(false);
-  const [items, setItems] = useState([]);
-  const[result, setResult] = useState({})
-  
-
-  useEffect(() => {
-   const cartItems = getCart().map(item => ({ ...item, quantity: 1 }));
-   setItems(cartItems);
- }, []);
 
 
 
-
- useEffect(() => {
-
-  const doFiltering = () => {
-    
-
-      if(filteredBook._id) {
-
-        items?.filter((item) => {
-          if(item._id === filteredBook._id)  setResult(item)
-      
-
-        } )
-      
-
-      }
-
-    
-
-  }
-
-  doFiltering()
-
- }, [items, filteredBook._id])
-
- 
- if(result === undefined) {
-  return(<>
-  
-  <h1 className="text-center">do u think about it?</h1>
-  </>)
- }
- 
-  const shouldRedirect = (redirect) => {
-    if (redirect) {
-      return (window.location.href = "/");
-    }
-  };
-
-  const alezz = () => {
-    alert("You need an account to borrow a book. Create One.");
-  };
-
-
-  const checkingz = () => {
-
-    if(isLogged === false) {
-
-      return(<>
-
-<h5 className="text-center text-primary"
-                          onClick={alezz}
-                        >
-                          Borrow Book
-                        </h5>
-      
-      
-      </>)
-    } else if(isLogged === true && items.length >= 3) {
-
-      return(<>
-      <h5 className="text-center">
-
-     BORROW LIMIT IS THREE
-
-      </h5>
-      
-      </>)
-    }
-    
-    
-    
-    else if(isLogged === true) {
-
-      return(<>
-   { result._id === filteredBook._id ? <h5 className="text-center">Book Is In Trolley </h5> : <h5 className="text-center text-primary"
-                        onClick={ () => {
-                           addItem(filteredBook, () => {
-                              setRedirect(true)
-                             
-                           })
-                        }
-                           
-                        }
-                        >
-                          Borrow Book
-                        </h5> }   
-      
-      
-      </>
-      )
-    }
-  }
-
-
-
-  return(<>
-  {shouldRedirect(redirect)}
-
-  {checkingz()}
-  
-  
-  </>)
-}
 
 
 const AuthorNames = ({ name }) => {

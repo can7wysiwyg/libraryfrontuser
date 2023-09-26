@@ -34,6 +34,14 @@ module.exports = function(app) {
         })
       )
       ,
+      app.use(
+        '/borrow',
+        createProxyMiddleware({
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        })
+      )
+      ,
       
       app.use(
         '/author',

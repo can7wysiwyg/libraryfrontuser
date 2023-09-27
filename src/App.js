@@ -10,6 +10,7 @@ import BooksByGenre from "./components/pages/BooksByGenre"
 import BookSingle from "./components/pages/BookSingle"
 import MyInfo from "./components/pages/MyInfo"
 import MyTrolley from "./components/pages/MyTrolley"
+import MyReadings from "./components/pages/MyReadings"
 
 function App() {
   return(<>
@@ -27,6 +28,7 @@ function App() {
 <Route path="/single_book/:id" element={<BookSingle />} />
 <Route path="/my_info" element={<MyInfo />} />
 <Route path="/my_trolley" element={<MyTrolley />} />
+<Route path="/my_readings" element={<MyReadings />} />
 
 
     </Routes>

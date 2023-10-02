@@ -94,7 +94,6 @@ setResult(item)
     }, [books, myBooks.BookOne])
  let named = result.bookFile
 
- console.log(named);
     
 
     return(<>

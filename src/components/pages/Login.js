@@ -46,13 +46,11 @@ const formSubmit = async(event) => {
                   <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" name='password' value={values.password} onChange={handleChange}  />
                 
                 </div>
-                <div className="form-group">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input" id="rememberMe" />
-                    <label className="form-check-label" htmlFor="rememberMe">Check me out</label>
-                  </div>
-                </div>
+                
                 <button type="submit" className="btn btn-primary">Login</button>
+                <hr/>
+                <a href="/forgot_password" style={{fontWeight: "bolder"}}>Forgot Password?</a>
+
               </form>
             </div>
           </div>

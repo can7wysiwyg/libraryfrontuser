@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { GlobalState } from "../GlobalState"
 
@@ -6,6 +6,29 @@ function Author() {
     const{id} = useParams()
    const state = useContext(GlobalState)
    const [authors] = state.authorsApi.authors
+
+   const[isLogged] = state.userApi.isLogged
+  
+   const[clientNum] = state.userApi.clientNum
+ 
+
+   
+
+   useEffect(() => {
+
+     if( isLogged === true && clientNum !== 1) {
+       return(<>
+       
+       {window.location.href = "/submit_report"}
+       
+       </>)
+     }
+     
+
+
+   }, [clientNum, isLogged])
+
+
    
    let newAuthor = authors.find((author) => author._id === id)
 

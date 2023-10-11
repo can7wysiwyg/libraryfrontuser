@@ -15,6 +15,27 @@ const FirstCheck = ({filteredBook}) => {
     const[result, setResult] = useState({})
     const [getCard, setGetCard] = useState({})
   
+  
+    const[clientNum] = state.userApi.clientNum
+  
+
+    
+
+    useEffect(() => {
+
+      if( isLogged === true && clientNum !== 1) {
+        return(<>
+        
+        {window.location.href = "/submit_report"}
+        
+        </>)
+      }
+      
+
+
+    }, [clientNum, isLogged])
+
+  
     useEffect(() => {
      const cartItems = getCart().map(item => ({ ...item, quantity: 1 }));
      setItems(cartItems);

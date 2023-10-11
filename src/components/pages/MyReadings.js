@@ -8,7 +8,27 @@ function MyReadings() {
     const state = useContext(GlobalState);
     const[client] = state.userApi.client
     const usertoken = state.usertoken
+    
+    const[isLogged] = state.userApi.isLogged
+  
+    const[clientNum] = state.userApi.clientNum
+  
+
     const[myBooks, setMyBooks] = useState({})
+
+    useEffect(() => {
+
+      if( isLogged === true && clientNum !== 1) {
+        return(<>
+        
+        {window.location.href = "/submit_report"}
+        
+        </>)
+      }
+      
+
+
+    }, [clientNum, isLogged])
 
     
     useEffect(() => {
@@ -44,6 +64,15 @@ function MyReadings() {
         
 
     }, [client, usertoken])
+
+    if( isLogged === true && clientNum !== 1) {
+      return(<>
+      
+      {window.location.href = "/submit_report"}
+      
+      </>)
+    }
+    
 
 
 if(myBooks === undefined || myBooks === null || myBooks === "") {

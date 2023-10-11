@@ -4,7 +4,29 @@ import { GlobalState } from "../GlobalState";
 import axios from "axios";
 
 function MyTrolley() {
+ const state = useContext(GlobalState)
   const [items, setItems] = useState([]);
+  const[isLogged] = state.userApi.isLogged
+  
+  const[clientNum] = state.userApi.clientNum
+
+
+  
+
+  useEffect(() => {
+
+    if( isLogged === true && clientNum !== 1) {
+      return(<>
+      
+      {window.location.href = "/submit_report"}
+      
+      </>)
+    }
+    
+
+
+  }, [clientNum, isLogged])
+
 
 
   useEffect(() => {

@@ -8,6 +8,26 @@ function MyInfo() {
    const state = useContext(GlobalState)
    const usertoken = state.usertoken
    const[person, setPerson] = useState({})
+   const[isLogged] = state.userApi.isLogged
+  
+   const[clientNum] = state.userApi.clientNum
+ 
+
+   
+   useEffect(() => {
+
+     if( isLogged === true && clientNum !== 1) {
+       return(<>
+       
+       {window.location.href = "/submit_report"}
+       
+       </>)
+     }
+     
+
+
+   }, [clientNum, isLogged])
+
  
    useEffect(() => {
 

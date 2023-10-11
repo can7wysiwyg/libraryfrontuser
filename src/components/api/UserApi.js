@@ -5,8 +5,9 @@ function UserApi() {
     const [isLogged, setIsLogged] = useState(false)
     const [isUser, setIsUser] = useState(false)
     const [onPermToBorow, setOnPermToBorrow] = useState(false)
-    const [onSuspension, seOnSuspension] = useState(false)
+    const [onSuspension, setOnSuspension] = useState(false)
     const[client, setClient] = useState("")
+    const[clientNum, setClientNum] = useState("")
 
 
     let usertoken = JSON.parse(JSON.stringify(localStorage.getItem('usertoken')))
@@ -23,10 +24,11 @@ function UserApi() {
 
              setIsLogged(true)
              setClient(res.data._id)
+             setClientNum(res.data.role)
 
              res.data.role === 1 && res.data.permToBorrow === true ? setOnPermToBorrow(true) : setOnPermToBorrow(false)
              res.data.role === 1 ? setIsUser(true) : setIsUser(false)
-             res.data.role !== 1 ? setIsUser(false) : setIsUser(true)
+             res.data.role !== 1 ? setOnSuspension(true) : setOnSuspension(false)
              
 
      
@@ -44,8 +46,9 @@ function UserApi() {
 isUser: [isUser, setIsUser],
 isLogged: [isLogged, setIsLogged],
 onPermToBorow: [onPermToBorow, setOnPermToBorrow],
-onSuspension: [onSuspension, seOnSuspension],
-client: [client, setClient]
+onSuspension: [onSuspension, setOnSuspension],
+client: [client, setClient],
+clientNum: [clientNum, setClientNum]
 
     }
 }

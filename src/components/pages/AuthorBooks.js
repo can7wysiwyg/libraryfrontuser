@@ -11,6 +11,27 @@ function AuthorBooks() {
    const state = useContext(GlobalState)
    const[authors] = state.authorsApi.authors
    const[results, setResults] = useState([])
+   const[isLogged] = state.userApi.isLogged
+  
+   const[clientNum] = state.userApi.clientNum
+ 
+
+
+
+   useEffect(() => {
+
+     if( isLogged === true && clientNum !== 1) {
+       return(<>
+       
+       {window.location.href = "/submit_report"}
+       
+       </>)
+     }
+     
+
+
+   }, [clientNum, isLogged])
+
 
    useEffect(() => {
 

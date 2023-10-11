@@ -11,8 +11,12 @@ import BookSingle from "./components/pages/BookSingle"
 import MyInfo from "./components/pages/MyInfo"
 import MyTrolley from "./components/pages/MyTrolley"
 import MyReadings from "./components/pages/MyReadings"
+import ForgotPassword from "./components/pages/ForgotPassword"
+import Reset from "./components/pages/Reset"
 
 function App() {
+  
+
   return(<>
   <Router>
     <NavBar />
@@ -29,6 +33,8 @@ function App() {
 <Route path="/my_info" element={<MyInfo />} />
 <Route path="/my_trolley" element={<MyTrolley />} />
 <Route path="/my_readings" element={<MyReadings />} />
+<Route path="/forgot_password" element={<ForgotPassword />} />
+<Route path="/reset" element={<Reset />} />
 
 
     </Routes>

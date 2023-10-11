@@ -8,7 +8,19 @@ function Home() {
   const state = useContext(GlobalState);
   const [books] = state.booksApi.books;
   const [genres] = state.genresApi.genres;
+  const[isLogged] = state.userApi.isLogged
+  const[clientNum] = state.userApi.clientNum
 
+  
+
+if( isLogged === true && clientNum !== 1) {
+  return(<>
+  
+  {window.location.href = "/submit_report"}
+  
+  </>)
+}
+  
 
 if(state === "" || state === undefined || state === null) {
   return(<>

@@ -8,7 +8,7 @@ function Reset() {
   const usertoken = location.state.data ;
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-console.log(usertoken);
+
   
 
   const handleSubmit = async (event) => {

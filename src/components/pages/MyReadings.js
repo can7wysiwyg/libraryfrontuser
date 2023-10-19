@@ -83,17 +83,25 @@ if(myBooks === undefined || myBooks === null || myBooks === "") {
      <h5 className="text-center">go to home to start your search for a book <a href="/">home</a></h5>
     
     </>)
+
+
+}
+
+if(myBooks === "") {
+  return(<>
+  h
+  </>)
 }
 
 
     return(<>
     <div className="container text-center">
 
-        <DisplayFirstBook myBooks={myBooks} />
+    { myBooks.bookOne === "" ? "" :   <DisplayFirstBook myBooks={myBooks} /> }
 
-        { myBooks.BookTwo === "" ? "" : <DisplaySecondBook myBooks={myBooks} />}
+        { myBooks.bookTwo === "" ? "" : <DisplaySecondBook myBooks={myBooks} />}
 
-        {myBooks.BookThree === "" ? "" : <DisplayThirdBook myBooks={myBooks} />}
+        {myBooks.bookThree === "" ? "" : <DisplayThirdBook myBooks={myBooks} />}
 
 
 
@@ -107,38 +115,85 @@ if(myBooks === undefined || myBooks === null || myBooks === "") {
 const DisplayFirstBook = ({myBooks}) => {
 const state = useContext(GlobalState)
 const[books] = state.booksApi.books
-const[result, setResult] = useState({})
+const usertoken = state.usertoken
+const[items, setItems] = useState({})
+
 
  
     useEffect(() => {
 
- if(myBooks.BookOne) {
+ if(myBooks.bookOne) {
 
-const item = books.find((book) => book._id === myBooks.BookOne)
-setResult(item)
+const item = books.find((book) => book._id === myBooks.bookOne)
+setItems(item)
 
  }
 
 
-    }, [books, myBooks.BookOne])
- let named = result.bookFile
+    }, [books, myBooks.bookOne])
+ let named = items.bookFile
 
+ 
+
+ const deleteBook = async (event) => {
+  event.preventDefault();
+  
+  try {
+    const response = await axios.put(`/card/update_book_one/${myBooks._id}`, null, {
+      headers: {
+        Authorization: `Bearer ${usertoken}`,
+      },
+    });
+    
+    alert(response.data.msg);
+
+
+  
+   const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+      headers: {
+        Authorization: `Bearer ${usertoken}`
+      }
+    })
+
+    alert(resp.data.msg);
+
+  
+    
+    
+    window.location.href = "/my_readings";
+  } catch (error) {
+    console.error("Error:", error);
+    // Handle errors if necessary
+  }
+}
+
+
+
+
+
+ 
     
 
     return(<>
     <div className="row justify-content-center" style={{marginTop: "2rem"}}>
     <div className="col-md-8">
             <div className="card mb-4">
-              <img src={result.bookImage} alt={result.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
+              <img src={items.bookImage} alt={items.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
               <div className="card-body text-center">
-                <h5 className="card-title">{result.bookTitle}</h5>
-                <p className="card-text">released on {moment(result.bookReleaseDate).format("MMM D YYYY")} </p>
+                <h5 className="card-title">{items.bookTitle}</h5>
+                <p className="card-text">released on {moment(items.bookReleaseDate).format("MMM D YYYY")} </p>
                 <h5 className="card-text text-primary" style={{cursor: "pointer"}}>
                    <a href={named} style={{textDecoration: "none"}} target="_blank" rel="noreferrer">
                      CLICK TO READ 
                      </a>
                      
                      </h5>
+
+                     
+
+                       <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
+
+                    
                 
                 
                 
@@ -160,21 +215,57 @@ setResult(item)
 const DisplaySecondBook = ({myBooks}) => {
 
     const state = useContext(GlobalState)
+    const usertoken = state.usertoken
 const[books] = state.booksApi.books
 const[result, setResult] = useState({})
 
  
     useEffect(() => {
 
- if(myBooks.BookTwo) {
+ if(myBooks.bookTwo) {
 
-const item = books.find((book) => book._id === myBooks.BookTwo)
+const item = books.find((book) => book._id === myBooks.bookTwo)
 setResult(item)
 
  }
 
 
-    }, [books, myBooks.BookTwo])
+    }, [books, myBooks.bookTwo])
+
+
+    const deleteBook = async (event) => {
+      event.preventDefault();
+      
+      try {
+        const response = await axios.put(`/card/delete_book_two/${myBooks._id}`, null, {
+          headers: {
+            Authorization: `Bearer ${usertoken}`,
+          },
+        });
+        
+        alert(response.data.msg);
+    
+    
+      
+       const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+          headers: {
+            Authorization: `Bearer ${usertoken}`
+          }
+        })
+    
+        alert(resp.data.msg);
+    
+      
+        
+        
+        window.location.href = "/my_readings";
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle errors if necessary
+      }
+    }
+    
+    
 
     return(<>
     <div className="row justify-content-center" style={{marginTop: "2rem"}}>
@@ -185,7 +276,8 @@ setResult(item)
                 <h5 className="card-title">{result.bookTitle}</h5>
                 <p className="card-text">released on {moment(result.bookReleaseDate).format("MMM D YYYY")} </p>
                 <h5 className="card-text text-primary" style={{cursor: "pointer"}} > <a href={result.bookFile} style={{textDecoration: "none"}} target="_blank" rel="noreferrer"> CLICK TO READ </a></h5>
-                
+                <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
+
                 
                 
               </div>
@@ -208,33 +300,72 @@ setResult(item)
 const DisplayThirdBook = ({myBooks}) => {
 
     const state = useContext(GlobalState)
+    const usertoken = state.usertoken
 const[books] = state.booksApi.books
 const[result, setResult] = useState({})
 
  
     useEffect(() => {
 
- if(myBooks.BookThree) {
+ if(myBooks.bookThree) {
 
-const item = books.find((book) => book._id === myBooks.BookThree)
+const item = books.find((book) => book._id === myBooks.bookThree)
 setResult(item)
 
  }
 
 
-    }, [books, myBooks.BookThree])
+    }, [books, myBooks.bookThree])
+
+
+
+    const deleteBook = async (event) => {
+      event.preventDefault();
+      
+      try {
+        const response = await axios.put(`/card/delete_book_three/${myBooks._id}`, null, {
+          headers: {
+            Authorization: `Bearer ${usertoken}`,
+          },
+        });
+        
+        alert(response.data.msg);
+    
+    
+      
+       const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+          headers: {
+            Authorization: `Bearer ${usertoken}`
+          }
+        })
+    
+        alert(resp.data.msg);
+    
+      
+        
+        
+        window.location.href = "/my_readings";
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle errors if necessary
+      }
+    }
+    
+    
+
 
     
     return(<>
     <div className="row justify-content-center" style={{marginTop: "2rem"}}>
-    myBooks.BookThree === "" ? "" :  <div className="col-md-8">
+     <div className="col-md-8">
             <div className="card mb-4">
               <img src={result.bookImage} alt={result.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
               <div className="card-body text-center">
                 <h5 className="card-title">{result.bookTitle}</h5>
                 <p className="card-text">released on {moment(result.bookReleaseDate).format("MMM D YYYY")} </p>
                 <h5 className="card-text text-primary" style={{cursor: "pointer"}} > <a href={result.bookFile} style={{textDecoration: "none"}} target="_blank" rel="noreferrer"> CLICK TO READ </a></h5>
-                
+                <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
+
                 
                 
               </div>
@@ -251,6 +382,8 @@ setResult(item)
     </>)
 
 }
+
+
 
 
 export default MyReadings

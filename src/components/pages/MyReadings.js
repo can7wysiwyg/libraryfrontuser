@@ -2,6 +2,10 @@ import { useContext, useEffect,  useState } from "react";
 import { GlobalState } from "../GlobalState";
 import axios from "axios";
 import moment from "moment/moment";
+import { Document, Page, pdfjs } from 'react-pdf';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
+
 
 
 function MyReadings() {
@@ -112,104 +116,92 @@ if(myBooks === "") {
 }
 
 
-const DisplayFirstBook = ({myBooks}) => {
-const state = useContext(GlobalState)
-const[books] = state.booksApi.books
-const usertoken = state.usertoken
-const[items, setItems] = useState({})
+function DisplayFirstBook({ myBooks }) {
+  const state = useContext(GlobalState);
+  const [books] = state.booksApi.books;
+  const usertoken = state.usertoken;
+  const [items, setItems] = useState({});
+  const [numPages, setNumPages] = useState(null); // Add 'numPages' state
+  const [pdfVisible, setPdfVisible] = useState(false); // Add 'pdfVisible' state
 
+  const handleButtonClick = () => {
+    setPdfVisible(true);
+  };
 
- 
-    useEffect(() => {
+  useEffect(() => {
+    if (myBooks.bookOne) {
+      const item = books.find((book) => book._id === myBooks.bookOne);
+      setItems(item);
+    }
+  }, [books, myBooks.bookOne]);
 
- if(myBooks.bookOne) {
+  const named = items.bookFile;
 
-const item = books.find((book) => book._id === myBooks.bookOne)
-setItems(item)
+  const deleteBook = async (event) => {
+    event.preventDefault();
 
- }
+    try {
+      const response = await axios.put(`/card/update_book_one/${myBooks._id}`, null, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
 
+      alert(response.data.msg);
 
-    }, [books, myBooks.bookOne])
- let named = items.bookFile
+      const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
 
- 
+      alert(resp.data.msg);
 
- const deleteBook = async (event) => {
-  event.preventDefault();
-  
-  try {
-    const response = await axios.put(`/card/update_book_one/${myBooks._id}`, null, {
-      headers: {
-        Authorization: `Bearer ${usertoken}`,
-      },
-    });
-    
-    alert(response.data.msg);
+      window.location.href = '/my_readings';
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle errors if necessary
+    }
+  };
 
-
-  
-   const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
-      headers: {
-        Authorization: `Bearer ${usertoken}`
-      }
-    })
-
-    alert(resp.data.msg);
-
-  
-    
-    
-    window.location.href = "/my_readings";
-  } catch (error) {
-    console.error("Error:", error);
-    // Handle errors if necessary
-  }
-}
-
-
-
-
-
- 
-    
-
-    return(<>
-    <div className="row justify-content-center" style={{marginTop: "2rem"}}>
-    <div className="col-md-8">
-            <div className="card mb-4">
-              <img src={items.bookImage} alt={items.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
-              <div className="card-body text-center">
-                <h5 className="card-title">{items.bookTitle}</h5>
-                <p className="card-text">released on {moment(items.bookReleaseDate).format("MMM D YYYY")} </p>
-                <h5 className="card-text text-primary" style={{cursor: "pointer"}}>
-                   <a href={named} style={{textDecoration: "none"}} target="_blank" rel="noreferrer">
-                     CLICK TO READ 
-                     </a>
-                     
-                     </h5>
-
-                     
-
-                       <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
-
-                    
-                
-                
-                
+  return (
+    <>
+      <div className="row justify-content-center" style={{ marginTop: '2rem' }}>
+        <div className="col-md-8">
+          <div className="card mb-4">
+            <img src={items.bookImage} alt={items.bookTitle} style={{ width: '100%', maxHeight: '30vh', objectFit: 'contain' }} />
+            <div className="card-body text-center">
+              <h5 className="card-title">{items.bookTitle}</h5>
+              <p className="card-text">released on {moment(items.bookReleaseDate).format('MMM D YYYY')}</p>
+              <div>
+                <button onClick={handleButtonClick}>Show PDF</button>
+                {pdfVisible && (
+                  <div>
+                    <Document
+                      file={named} // Use the 'named' variable for the PDF URL
+                      onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                    >
+                      {Array.from(new Array(numPages), (el, index) => (
+                        <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+                      ))}
+                    </Document>
+                  </div>
+                )}
               </div>
+              <h5 className="card-text text-primary" style={{ cursor: 'pointer' }} onClick={deleteBook}>
+                not satisfied? return book
+              </h5>
             </div>
           </div>
-
-
-
-
-
-    </div>
-    
-    
-    </>)
+        </div>
+      </div>
+    </>
+  );
 }
+
+
+
+
 
 
 const DisplaySecondBook = ({myBooks}) => {

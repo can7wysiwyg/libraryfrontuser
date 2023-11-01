@@ -121,8 +121,18 @@ function DisplayFirstBook({ myBooks }) {
   const [books] = state.booksApi.books;
   const usertoken = state.usertoken;
   const [items, setItems] = useState({});
-  const [numPages, setNumPages] = useState(null); // Add 'numPages' state
-  const [pdfVisible, setPdfVisible] = useState(false); // Add 'pdfVisible' state
+  const [numPages, setNumPages] = useState(null);
+  const [pdfVisible, setPdfVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchPage, setSearchPage] = useState(currentPage);
+
+  // Add memory function to retrieve and set the current page from local storage
+  useEffect(() => {
+    const storedPage = localStorage.getItem('currentPDFPage');
+    if (storedPage) {
+      setCurrentPage(parseInt(storedPage, 10));
+    }
+  }, []);
 
   const handleButtonClick = () => {
     setPdfVisible(true);
@@ -164,6 +174,20 @@ function DisplayFirstBook({ myBooks }) {
     }
   };
 
+  // Add a function to update the current page and store it in local storage
+  const updateCurrentPage = (newPage) => {
+    setCurrentPage(newPage);
+    localStorage.setItem('currentPDFPage', newPage);
+  };
+
+  // Add a function to handle page search
+  const handleSearchPage = (page) => {
+    if (page >= 1 && page <= numPages) {
+      setCurrentPage(page);
+      localStorage.setItem('currentPDFPage', page);
+    }
+  };
+
   return (
     <>
       <div className="row justify-content-center" style={{ marginTop: '2rem' }}>
@@ -178,13 +202,37 @@ function DisplayFirstBook({ myBooks }) {
                 {pdfVisible && (
                   <div>
                     <Document
-                      file={named} // Use the 'named' variable for the PDF URL
-                      onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                      file={named}
+                      onLoadSuccess={({ numPages }) => {
+                        setNumPages(numPages);
+                        setSearchPage(currentPage);
+                      }}
                     >
-                      {Array.from(new Array(numPages), (el, index) => (
-                        <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-                      ))}
+                      <Page pageNumber={currentPage} />
                     </Document>
+                    <div>
+                      <input
+                        type="number"
+                        value={searchPage}
+                        onChange={(e) => setSearchPage(parseInt(e.target.value))}
+                      />
+                      <button onClick={() => handleSearchPage(searchPage)}>Go To Page</button>
+                    </div>
+                    <div>
+                      <p>Page {currentPage} of {numPages}</p>
+                      <button
+                        disabled={currentPage <= 1}
+                        onClick={() => updateCurrentPage(currentPage - 1)}
+                      >
+                        Previous Page
+                      </button>
+                      <button
+                        disabled={currentPage >= numPages}
+                        onClick={() => updateCurrentPage(currentPage + 1)}
+                      >
+                        Next Page
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -201,179 +249,270 @@ function DisplayFirstBook({ myBooks }) {
 
 
 
+function DisplaySecondBook ({ myBooks }) {
+  const state = useContext(GlobalState);
+  const [books] = state.booksApi.books;
+  const usertoken = state.usertoken;
+  const [items, setItems] = useState({});
+  const [numPages, setNumPages] = useState(null);
+  const [pdfVisible, setPdfVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchPage, setSearchPage] = useState(currentPage);
 
-
-
-const DisplaySecondBook = ({myBooks}) => {
-
-    const state = useContext(GlobalState)
-    const usertoken = state.usertoken
-const[books] = state.booksApi.books
-const[result, setResult] = useState({})
-
- 
-    useEffect(() => {
-
- if(myBooks.bookTwo) {
-
-const item = books.find((book) => book._id === myBooks.bookTwo)
-setResult(item)
-
- }
-
-
-    }, [books, myBooks.bookTwo])
-
-
-    const deleteBook = async (event) => {
-      event.preventDefault();
-      
-      try {
-        const response = await axios.put(`/card/delete_book_two/${myBooks._id}`, null, {
-          headers: {
-            Authorization: `Bearer ${usertoken}`,
-          },
-        });
-        
-        alert(response.data.msg);
-    
-    
-      
-       const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
-          headers: {
-            Authorization: `Bearer ${usertoken}`
-          }
-        })
-    
-        alert(resp.data.msg);
-    
-      
-        
-        
-        window.location.href = "/my_readings";
-      } catch (error) {
-        console.error("Error:", error);
-        // Handle errors if necessary
-      }
+  // Add memory function to retrieve and set the current page from local storage
+  useEffect(() => {
+    const storedPage = localStorage.getItem('currentPDFPage');
+    if (storedPage) {
+      setCurrentPage(parseInt(storedPage, 10));
     }
-    
-    
+  }, []);
 
-    return(<>
-    <div className="row justify-content-center" style={{marginTop: "2rem"}}>
-    <div className="col-md-8">
-            <div className="card mb-4">
-              <img src={result.bookImage} alt={result.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
-              <div className="card-body text-center">
-                <h5 className="card-title">{result.bookTitle}</h5>
-                <p className="card-text">released on {moment(result.bookReleaseDate).format("MMM D YYYY")} </p>
-                <h5 className="card-text text-primary" style={{cursor: "pointer"}} > <a href={result.bookFile} style={{textDecoration: "none"}} target="_blank" rel="noreferrer"> CLICK TO READ </a></h5>
-                <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
+  const handleButtonClick = () => {
+    setPdfVisible(true);
+  };
 
-                
-                
+  useEffect(() => {
+    if (myBooks.bookTwo) {
+      const item = books.find((book) => book._id === myBooks.bookTwo);
+      setItems(item);
+    }
+  }, [books, myBooks.bookTwo]);
+
+  const named = items.bookFile;
+
+  const deleteBook = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.put(`/card/delete_book_two/${myBooks._id}`, null, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
+
+      alert(response.data.msg);
+
+      const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
+
+      alert(resp.data.msg);
+
+      window.location.href = '/my_readings';
+    } catch (error) {
+      console.error('Error:', error);
+      
+    }
+  };
+
+  
+  const updateCurrentPage = (newPage) => {
+    setCurrentPage(newPage);
+    localStorage.setItem('currentPDFPage', newPage);
+  };
+
+  
+  const handleSearchPage = (page) => {
+    if (page >= 1 && page <= numPages) {
+      setCurrentPage(page);
+      localStorage.setItem('currentPDFPage', page);
+    }
+  };
+
+  return (
+    <>
+      <div className="row justify-content-center" style={{ marginTop: '2rem' }}>
+        <div className="col-md-8">
+          <div className="card mb-4">
+            <img src={items.bookImage} alt={items.bookTitle} style={{ width: '100%', maxHeight: '30vh', objectFit: 'contain' }} />
+            <div className="card-body text-center">
+              <h5 className="card-title">{items.bookTitle}</h5>
+              <p className="card-text">released on {moment(items.bookReleaseDate).format('MMM D YYYY')}</p>
+              <div>
+                <button onClick={handleButtonClick}>Show PDF</button>
+                {pdfVisible && (
+                  <div>
+                    <Document
+                      file={named}
+                      onLoadSuccess={({ numPages }) => {
+                        setNumPages(numPages);
+                        setSearchPage(currentPage);
+                      }}
+                    >
+                      <Page pageNumber={currentPage} />
+                    </Document>
+                    <div>
+                      <input
+                        type="number"
+                        value={searchPage}
+                        onChange={(e) => setSearchPage(parseInt(e.target.value))}
+                      />
+                      <button onClick={() => handleSearchPage(searchPage)}>Go To Page</button>
+                    </div>
+                    <div>
+                      <p>Page {currentPage} of {numPages}</p>
+                      <button
+                        disabled={currentPage <= 1}
+                        onClick={() => updateCurrentPage(currentPage - 1)}
+                      >
+                        Previous Page
+                      </button>
+                      <button
+                        disabled={currentPage >= numPages}
+                        onClick={() => updateCurrentPage(currentPage + 1)}
+                      >
+                        Next Page
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+              <h5 className="card-text text-primary" style={{ cursor: 'pointer' }} onClick={deleteBook}>
+                not satisfied? return book
+              </h5>
             </div>
           </div>
-
-
-
-
-
-    </div>
-    
-    
-    </>)
-
-
-    
+        </div>
+      </div>
+    </>
+  );
 }
 
-const DisplayThirdBook = ({myBooks}) => {
 
-    const state = useContext(GlobalState)
-    const usertoken = state.usertoken
-const[books] = state.booksApi.books
-const[result, setResult] = useState({})
+function DisplayThirdBook ({ myBooks }) {
+  const state = useContext(GlobalState);
+  const [books] = state.booksApi.books;
+  const usertoken = state.usertoken;
+  const [items, setItems] = useState({});
+  const [numPages, setNumPages] = useState(null);
+  const [pdfVisible, setPdfVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchPage, setSearchPage] = useState(currentPage);
 
- 
-    useEffect(() => {
-
- if(myBooks.bookThree) {
-
-const item = books.find((book) => book._id === myBooks.bookThree)
-setResult(item)
-
- }
-
-
-    }, [books, myBooks.bookThree])
-
-
-
-    const deleteBook = async (event) => {
-      event.preventDefault();
-      
-      try {
-        const response = await axios.put(`/card/delete_book_three/${myBooks._id}`, null, {
-          headers: {
-            Authorization: `Bearer ${usertoken}`,
-          },
-        });
-        
-        alert(response.data.msg);
-    
-    
-      
-       const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
-          headers: {
-            Authorization: `Bearer ${usertoken}`
-          }
-        })
-    
-        alert(resp.data.msg);
-    
-      
-        
-        
-        window.location.href = "/my_readings";
-      } catch (error) {
-        console.error("Error:", error);
-        // Handle errors if necessary
-      }
+  // Add memory function to retrieve and set the current page from local storage
+  useEffect(() => {
+    const storedPage = localStorage.getItem('currentPDFPage');
+    if (storedPage) {
+      setCurrentPage(parseInt(storedPage, 10));
     }
-    
-    
+  }, []);
 
+  const handleButtonClick = () => {
+    setPdfVisible(true);
+  };
 
-    
-    return(<>
-    <div className="row justify-content-center" style={{marginTop: "2rem"}}>
-     <div className="col-md-8">
-            <div className="card mb-4">
-              <img src={result.bookImage} alt={result.bookTitle} style={{width: "100%", maxHeight: "30vh", objectFit: "contain"}} />
-              <div className="card-body text-center">
-                <h5 className="card-title">{result.bookTitle}</h5>
-                <p className="card-text">released on {moment(result.bookReleaseDate).format("MMM D YYYY")} </p>
-                <h5 className="card-text text-primary" style={{cursor: "pointer"}} > <a href={result.bookFile} style={{textDecoration: "none"}} target="_blank" rel="noreferrer"> CLICK TO READ </a></h5>
-                <h5 className="card-text text-primary" style={{cursor: "pointer"}} onClick={deleteBook}>not satisfied? return book</h5>
+  useEffect(() => {
+    if (myBooks.bookThree) {
+      const item = books.find((book) => book._id === myBooks.bookThree);
+      setItems(item);
+    }
+  }, [books, myBooks.bookThree]);
 
-                
-                
+  const named = items.bookFile;
+
+  const deleteBook = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.put(`/card/delete_book_three/${myBooks._id}`, null, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
+
+      alert(response.data.msg);
+
+      const resp = await axios.delete(`/card/delete_book/${myBooks._id}`, {
+        headers: {
+          Authorization: `Bearer ${usertoken}`,
+        },
+      });
+
+      alert(resp.data.msg);
+
+      window.location.href = '/my_readings';
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle errors if necessary
+    }
+  };
+
+  // Add a function to update the current page and store it in local storage
+  const updateCurrentPage = (newPage) => {
+    setCurrentPage(newPage);
+    localStorage.setItem('currentPDFPage', newPage);
+  };
+
+  // Add a function to handle page search
+  const handleSearchPage = (page) => {
+    if (page >= 1 && page <= numPages) {
+      setCurrentPage(page);
+      localStorage.setItem('currentPDFPage', page);
+    }
+  };
+
+  return (
+    <>
+      <div className="row justify-content-center" style={{ marginTop: '2rem' }}>
+        <div className="col-md-8">
+          <div className="card mb-4">
+            <img src={items.bookImage} alt={items.bookTitle} style={{ width: '100%', maxHeight: '30vh', objectFit: 'contain' }} />
+            <div className="card-body text-center">
+              <h5 className="card-title">{items.bookTitle}</h5>
+              <p className="card-text">released on {moment(items.bookReleaseDate).format('MMM D YYYY')}</p>
+              <div>
+                <button onClick={handleButtonClick}>Show PDF</button>
+                {pdfVisible && (
+                  <div>
+                    <Document
+                      file={named}
+                      onLoadSuccess={({ numPages }) => {
+                        setNumPages(numPages);
+                        setSearchPage(currentPage);
+                      }}
+                    >
+                      <Page pageNumber={currentPage} />
+                    </Document>
+                    <div>
+                      <input
+                        type="number"
+                        value={searchPage}
+                        onChange={(e) => setSearchPage(parseInt(e.target.value))}
+                      />
+                      <button onClick={() => handleSearchPage(searchPage)}>Go To Page</button>
+                    </div>
+                    <div>
+                      <p>Page {currentPage} of {numPages}</p>
+                      <button
+                        disabled={currentPage <= 1}
+                        onClick={() => updateCurrentPage(currentPage - 1)}
+                      >
+                        Previous Page
+                      </button>
+                      <button
+                        disabled={currentPage >= numPages}
+                        onClick={() => updateCurrentPage(currentPage + 1)}
+                      >
+                        Next Page
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+              <h5 className="card-text text-primary" style={{ cursor: 'pointer' }} onClick={deleteBook}>
+                not satisfied? return book
+              </h5>
             </div>
           </div>
-                      
-
-
-
-
-    </div>
-    
-    
-    </>)
-
+        </div>
+      </div>
+    </>
+  );
 }
+
+
 
 
 
